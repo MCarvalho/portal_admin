@@ -1,0 +1,14 @@
+.rolesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.rolesContainer label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}

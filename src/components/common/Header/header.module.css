@@ -1,0 +1,21 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #2d3748;
+}
+
+.logo {
+  height: 50px; /* Ajuste conforme o tamanho desejado da sua logo */
+  width: auto;
+}
+
+.logoutButton {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}

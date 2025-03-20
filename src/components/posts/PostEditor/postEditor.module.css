@@ -1,0 +1,83 @@
+.editorContainer {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 6px;
+  width: 100%;
+  min-height: 450px;
+  margin-bottom: 20px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.titleInput {
+  width: 100%;
+  padding: 10px;
+  font-size: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.summaryInput {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 60px;
+  resize: none;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+.toolbar button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.toolbar button:hover {
+  background-color: #e0e0e0;
+}
+
+.activeButton {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.editorContent {
+  min-height: 300px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.saveButton {
+  padding: 10px 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+  background-color: #0056b3;
+}
