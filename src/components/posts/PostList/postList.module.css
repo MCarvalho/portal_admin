@@ -48,6 +48,7 @@
 }
 
 .postContent {
+  margin-left: 5px;
   flex: 1; /* O conteúdo ocupa o máximo do espaço disponível */
 }
 
@@ -94,4 +95,12 @@
 
 .deleteButton:hover {
   background-color: #c82333;
+}
+
+.coverImage {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }

@@ -8,9 +8,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem('authToken') || null,
   );
 
-  // URL do backend
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
   const Login = async (email, password) => {
     const response = await login(email, password);
     if (response.success) {

@@ -25,6 +25,12 @@ api.interceptors.response.use(
     const message =
       error.response?.data?.message ||
       'Erro inesperado. Por favor, tente novamente.';
+
+    if (message === 'Token inválido ou expirado') {
+      localStorage.removeItem('authToken');
+      window.location.href = '/login';
+    }
+
     return Promise.reject({ message });
   },
 );

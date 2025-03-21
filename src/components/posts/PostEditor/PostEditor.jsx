@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Heading from '@tiptap/extension-heading';
 import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
+import Underline from '@tiptap/extension-underline';
 import {
   FaBold,
   FaItalic,
@@ -15,28 +15,47 @@ import {
   FaAlignJustify,
 } from 'react-icons/fa';
 import styles from './postEditor.module.css';
+import { createPost, uploadImage } from '@/services/postService';
 
-const PostEditor = ({ initialPost, onSave }) => {
-  const [post, setPost] = useState({
-    title: initialPost?.title || '',
-    summary: initialPost?.summary || '',
-    content: initialPost?.content || '<p>Escreva seu post aqui...</p>',
-  });
-
+const PostEditor = ({ initialPost, onSave, setPost }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Heading.configure({ levels: [1, 2, 3] }),
+      StarterKit.configure({
+        allowImages: true,
+      }),
       Image,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
+      Underline,
     ],
-    content: post.content,
+    content: initialPost.content,
   });
 
-  const handleSave = () => {
-    onSave(post);
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      try {
+        const response = await uploadImage(file);
+
+        const imageUrl = new URL(response.url, import.meta.env.VITE_BACKEND_URL)
+          .href;
+
+        console.log(imageUrl);
+        setPost((prevPost) => ({
+          ...prevPost,
+          imageIds: [...prevPost.imageIds, response.id],
+          images: [...prevPost.images, imageUrl],
+        }));
+
+        editor.commands.setContent(
+          editor.getHTML() +
+            `<img crossorigin="anonymous" src="${imageUrl}" alt="Imagem do post" style="max-width:100%; height:auto;" />`,
+        );
+      } catch (error) {
+        console.error('Erro ao fazer upload da imagem:', error);
+      }
+    }
   };
 
   return (
@@ -44,15 +63,15 @@ const PostEditor = ({ initialPost, onSave }) => {
       <input
         type="text"
         placeholder="Título do Post"
-        value={post.title}
-        onChange={(e) => setPost({ ...post, title: e.target.value })}
+        value={initialPost.title}
+        onChange={(e) => setPost({ ...initialPost, title: e.target.value })}
         className={styles.titleInput}
       />
 
       <textarea
         placeholder="Resumo do post (opcional)"
-        value={post.summary}
-        onChange={(e) => setPost({ ...post, summary: e.target.value })}
+        value={initialPost.summary}
+        onChange={(e) => setPost({ ...initialPost, summary: e.target.value })}
         className={styles.summaryInput}
       />
 
@@ -147,9 +166,16 @@ const PostEditor = ({ initialPost, onSave }) => {
         </button>
       </div>
 
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        className={styles.imageUpload}
+      />
+
       <EditorContent editor={editor} className={styles.editorContent} />
 
-      <button onClick={handleSave} className={styles.saveButton}>
+      <button onClick={onSave} className={styles.saveButton}>
         Salvar Post
       </button>
     </div>
