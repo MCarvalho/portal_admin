@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import PostForm from '@/components/posts/PostForm/PostForm';
+import UserForm from '@/components/users/UserForm/UserForm';
 
 const PostEdit = () => {
   const { id } = useParams();
@@ -22,7 +22,7 @@ const PostEdit = () => {
   };
 
   return post ? (
-    <PostForm initialPost={post} onSave={handleSave} />
+    <UserForm initialPost={post} onSave={handleSave} />
   ) : (
     <p>Carregando...</p>
   );

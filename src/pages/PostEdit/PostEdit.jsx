@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { useParams } from 'react-router-dom';
 import PostEditor from '@/components/posts/PostEditor/PostEditor';
 import { getPostById, updatePost } from '@/services/postService';
 
-const PostEdit = ({ onSave }) => {
+const PostEdit = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const fetchedPost = await getPostById(id);
-        setPost(fetchedPost);
+        const processedPost = {
+          ...fetchedPost,
+          imageIds: fetchedPost?.PostImages?.map((img) => img.id) || [],
+          images: fetchedPost?.PostImages?.map((img) => img.path) || [],
+          removedImageIds: [],
+        };
+        setPost(processedPost);
       } catch (error) {
         console.error('Erro ao buscar o post:', error);
       }
@@ -20,25 +29,16 @@ const PostEdit = ({ onSave }) => {
     fetchPost();
   }, [id]);
 
-  const handleSave = async () => {
-    if (post.imageIds.length === 0) {
-      alert('Por favor, insira pelo menos uma imagem.');
-      return;
+  const handleSave = async (processedPostData) => {
+    if (processedPostData.imageIds.length === 0) {
+      throw new Error('Por favor, insira pelo menos uma imagem.');
     }
 
     try {
-      const payload = {
-        title: post.title,
-        summary: post.summary,
-        content: post.content,
-        imageIds: post.imageIds,
-        isFeatured: post.isFeatured || false,
-      };
-
-      await updatePost(id, payload);
-      onSave(payload);
+      await updatePost(id, processedPostData);
+      navigate('/posts');
     } catch (error) {
-      console.error('Erro ao atualizar o post:', error);
+      throw error('Erro ao atualizar o post.');
     }
   };
 

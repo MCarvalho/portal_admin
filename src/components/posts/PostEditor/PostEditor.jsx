@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
@@ -15,9 +15,32 @@ import {
   FaAlignJustify,
 } from 'react-icons/fa';
 import styles from './postEditor.module.css';
-import { createPost, uploadImage } from '@/services/postService';
+import { uploadImage } from '@/services/postService';
 
 const PostEditor = ({ initialPost, onSave, setPost }) => {
+  const [isSaving, setIsSaving] = useState(false);
+  const hasLoadedInitialImages = useRef(false);
+
+  useEffect(() => {
+    if (
+      initialPost?.PostImages?.length > 0 &&
+      !hasLoadedInitialImages.current
+    ) {
+      const existingImages = initialPost.PostImages;
+      const imageIds = existingImages.map((img) => img.id);
+      const images = existingImages.map(
+        (img) => `${import.meta.env.VITE_BACKEND_URL}${img.path}`,
+      );
+      setPost((prev) => ({
+        ...prev,
+        imageIds,
+        images,
+      }));
+
+      hasLoadedInitialImages.current = true;
+    }
+  }, [initialPost, setPost]);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -29,9 +52,45 @@ const PostEditor = ({ initialPost, onSave, setPost }) => {
       }),
       Underline,
     ],
-    content: initialPost.content,
+    content: initialPost?.content || 'Conteudo do post',
   });
 
+  const handlePostSave = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+
+    try {
+      const htmlContent = editor.getHTML();
+
+      const usedImagePaths = Array.from(
+        new DOMParser().parseFromString(htmlContent, 'text/html').images,
+      ).map((img) => new URL(img.src).pathname);
+
+      const usedImageIds = [];
+      const removedImageIds = [];
+
+      initialPost.PostImages?.forEach((image) => {
+        const matches = usedImagePaths.some((path) =>
+          path.endsWith(image.path),
+        );
+        if (matches) {
+          usedImageIds.push(image.id);
+        } else {
+          removedImageIds.push(image.id);
+        }
+      });
+
+      await onSave({
+        ...initialPost,
+        content: htmlContent,
+        imageIds: usedImageIds,
+        removedImageIds,
+      });
+    } catch (err) {
+      alert(err);
+      setIsSaving(false);
+    }
+  };
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -41,11 +100,17 @@ const PostEditor = ({ initialPost, onSave, setPost }) => {
         const imageUrl = new URL(response.url, import.meta.env.VITE_BACKEND_URL)
           .href;
 
-        console.log(imageUrl);
         setPost((prevPost) => ({
           ...prevPost,
           imageIds: [...prevPost.imageIds, response.id],
           images: [...prevPost.images, imageUrl],
+          PostImages: [
+            ...prevPost.PostImages,
+            {
+              id: response.id,
+              path: response.url,
+            },
+          ],
         }));
 
         editor.commands.setContent(
@@ -175,8 +240,12 @@ const PostEditor = ({ initialPost, onSave, setPost }) => {
 
       <EditorContent editor={editor} className={styles.editorContent} />
 
-      <button onClick={onSave} className={styles.saveButton}>
-        Salvar Post
+      <button
+        className={styles.saveButton}
+        disabled={isSaving}
+        onClick={handlePostSave}
+      >
+        {isSaving ? 'Salvando...' : 'Salvar Post'}
       </button>
     </div>
   );
