@@ -125,6 +125,19 @@ const PostEditor = ({ initialPost, onSave, setPost }) => {
 
   return (
     <div className={styles.editorContainer}>
+      <div className={styles.featuredToggleContainer}>
+        <label className={styles.featuredToggle}>
+          <input
+            type="checkbox"
+            checked={initialPost.isFeatured || false}
+            onChange={(e) =>
+              setPost({ ...initialPost, isFeatured: e.target.checked })
+            }
+          />
+          Destacar post na home
+        </label>
+      </div>
+
       <input
         type="text"
         placeholder="Título do Post"

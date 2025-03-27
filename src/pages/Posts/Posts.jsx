@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getPosts, deletePost } from '@/services/postService';
 import PostList from '@/components/posts/PostList/PostList';
+import PostFilters from '@/components/posts/PostFilters/PostFilters';
+import Pagination from '@/components/common/Pagination/Pagination';
 import styles from './posts.module.css';
 
 const Posts = () => {
@@ -14,7 +16,7 @@ const Posts = () => {
 
   useEffect(() => {
     fetchPosts();
-  }, [page, orderBy, orderDirection]);
+  }, [page, orderBy, orderDirection, searchTerm]);
 
   const fetchPosts = async () => {
     try {
@@ -33,17 +35,18 @@ const Posts = () => {
     }
   };
 
-  const handleSearch = (event) => {
-    event.preventDefault();
-    setPage(1); // Resetar para página 1 ao pesquisar
-    fetchPosts();
+  const handleFiltersChange = ({ searchTerm, orderBy, orderDirection }) => {
+    setPage(1);
+    setSearchTerm(searchTerm);
+    setOrderBy(orderBy);
+    setOrderDirection(orderDirection);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Tem certeza que deseja excluir este post?')) {
       try {
         await deletePost(id);
-        fetchPosts(); // Atualizar lista após excluir
+        fetchPosts();
       } catch (error) {
         alert(error.message);
       }
@@ -58,60 +61,23 @@ const Posts = () => {
 
   return (
     <div className={styles.container}>
-      {/* Barra de pesquisa */}
-      <form onSubmit={handleSearch} className={styles.searchForm}>
-        <input
-          type="text"
-          name="search"
-          placeholder="Buscar posts..."
-          className={styles.searchInput}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button type="submit" className={styles.searchButton}>
-          Buscar
-        </button>
-      </form>
+      <PostFilters
+        searchTerm={searchTerm}
+        orderBy={orderBy}
+        orderDirection={orderDirection}
+        onChange={handleFiltersChange}
+      />
 
-      {/* Opções de ordenação */}
-      <div className={styles.sortOptions}>
-        <label>Ordenar por:</label>
-        <select value={orderBy} onChange={(e) => setOrderBy(e.target.value)}>
-          <option value="createdAt">Data</option>
-          <option value="title">Título</option>
-          <option value="author">Autor</option>
-        </select>
-        <button
-          onClick={() =>
-            setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC')
-          }
-        >
-          {orderDirection === 'ASC' ? 'Crescente' : 'Decrescente'}
-        </button>
-      </div>
-
-      {/* Mensagem de erro */}
       {error && <p className={styles.error}>{error}</p>}
 
-      {/* Lista de Posts */}
       <PostList posts={posts} onDelete={handleDelete} />
 
-      {/* Paginação */}
-      <div className={styles.pagination}>
-        <button
-          disabled={page === 1}
-          onClick={() => handlePageChange(page - 1)}
-        >
-          Anterior
-        </button>
-        <span>Página {page}</span>
-        <button
-          disabled={page * 10 >= totalPosts}
-          onClick={() => handlePageChange(page + 1)}
-        >
-          Próxima
-        </button>
-      </div>
+      <Pagination
+        total={totalPosts}
+        page={page}
+        limit={10}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

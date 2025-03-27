@@ -2,52 +2,26 @@ import React from 'react';
 import styles from './userRoles.module.css';
 
 const UserRoles = ({ roles, setRoles }) => {
-  const handleRoleChange = (event) => {
-    const { value, checked } = event.target;
-    setRoles((prevRoles) =>
-      checked
-        ? [...prevRoles, value]
-        : prevRoles.filter((role) => role !== value),
-    );
+  const handleSelectChange = (event) => {
+    const value = event.target.value;
+    setRoles([value]); // Apenas uma role será usada
   };
 
   return (
     <div className={styles.rolesContainer}>
       <label>
-        <input
-          type="checkbox"
-          value="ouvidoria"
-          checked={roles.includes('ombudsman')}
-          onChange={handleRoleChange}
-        />
-        Acesso à Ouvidoria
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          value="posts"
-          checked={roles.includes('posts')}
-          onChange={handleRoleChange}
-        />
-        Acesso à Postagens
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          value="admin"
-          checked={roles.includes('admin')}
-          onChange={handleRoleChange}
-        />
-        Acesso Total
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          value="manager"
-          checked={roles.includes('manager')}
-          onChange={handleRoleChange}
-        />
-        Acesso Total
+        Permissão de acesso:
+        <select
+          value={roles?.[0] || ''}
+          onChange={(e) => handleSelectChange(e)}
+          required
+        >
+          <option value="">Selecione uma função</option>
+          <option value="admin">Administrador</option>
+          <option value="editor">Editor</option>
+          <option value="manager">Gerente</option>
+          <option value="ombudsman">Ouvidor</option>
+        </select>
       </label>
     </div>
   );

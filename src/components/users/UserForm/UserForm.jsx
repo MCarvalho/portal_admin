@@ -8,10 +8,23 @@ const UserForm = ({ initialUser, onSave }) => {
   const [user, setUser] = useState(
     initialUser || { name: '', email: '', role: [] },
   );
+  const isEdit = Boolean(initialUser);
+  const [useRandomPassword, setUseRandomPassword] = useState(!isEdit);
+
+  const generateRandomPassword = () => {
+    return Math.random().toString(36).slice(-10) + '1a'; // 10 caracteres + força letra e número
+  };
 
   const handleSave = () => {
-    onSave(user);
-    navigate('/users');
+    const finalUser = { ...user };
+
+    if (!isEdit) {
+      finalUser.password = useRandomPassword
+        ? generateRandomPassword()
+        : user.password;
+    }
+
+    onSave(finalUser);
   };
 
   return (
@@ -31,9 +44,32 @@ const UserForm = ({ initialUser, onSave }) => {
         onChange={(e) => setUser({ ...user, email: e.target.value })}
         className={styles.inputField}
       />
+      {!isEdit && (
+        <>
+          <label className={styles.checkboxContainer}>
+            Usar senha aleatória (usuário precisará redefinir via "Esqueci minha
+            senha")
+            <input
+              type="checkbox"
+              checked={useRandomPassword}
+              onChange={() => setUseRandomPassword(!useRandomPassword)}
+            />
+          </label>
+
+          {!useRandomPassword && (
+            <input
+              type="password"
+              placeholder="Senha temporária"
+              value={user.password}
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
+              className={styles.inputField}
+            />
+          )}
+        </>
+      )}
       <UserRoles
-        roles={user.role}
-        setRoles={(roles) => setUser({ ...user, role: roles })}
+        roles={[user.role]}
+        setRoles={(roles) => setUser({ ...user, role: roles[0] })}
       />
       <button onClick={handleSave} className={styles.saveButton}>
         Salvar

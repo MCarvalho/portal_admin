@@ -23,7 +23,7 @@ import UserCreate from '@/pages/UserCreate/UserCreate';
 import UserEdit from '@/pages/UserEdit/UserEdit';
 
 const protectedRoutes = [
-  { path: '/', element: <Dashboard /> },
+  { path: '/', element: <Posts /> },
   { path: '/posts', element: <Posts /> },
   { path: '/posts/new', element: <PostCreate /> },
   { path: '/posts/edit/:id', element: <PostEdit /> },

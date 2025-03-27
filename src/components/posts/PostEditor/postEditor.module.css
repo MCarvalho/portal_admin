@@ -104,3 +104,25 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
+.featuredToggleContainer {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.featuredToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+}
+
+.featuredToggle input {
+  margin: 0;
+  transform: translateY(1px); /* ou -1px para ajustar finamente */
+}

@@ -47,7 +47,6 @@ export const deletePost = async (id) => {
   try {
     await api.delete(`/admin/posts/${id}`);
   } catch (error) {
-    console.log(error);
     throw new Error(error.message);
   }
 };

@@ -29,7 +29,8 @@ const PostList = ({ posts, onDelete }) => {
             <div className={styles.postContent}>
               <h2>{post.title}</h2>
               <p>
-                <strong>Resumo:</strong> {post.summary}
+                <strong>Resumo:</strong> {post.summary?.slice(0, 350)}
+                {post.summary?.length > 200 ? '...' : ''}
               </p>
               <p>
                 <strong>Autor:</strong> {post.author}

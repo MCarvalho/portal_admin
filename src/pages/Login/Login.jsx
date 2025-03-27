@@ -23,7 +23,13 @@ const Login = () => {
       return;
     }
 
-    navigate('/');
+    const role = result.user?.role;
+
+    if (role === 'ombudsman') {
+      navigate('/ombudsOffice');
+    } else {
+      navigate('/posts');
+    }
   };
 
   return (

@@ -5,6 +5,13 @@ import styles from './userList.module.css';
 const UserList = ({ users, onDelete }) => {
   const navigate = useNavigate();
 
+  const roleLabels = {
+    admin: 'Administrador',
+    editor: 'Editor de Conteúdo',
+    ombudsman: 'Ouvidoria',
+    manager: 'Gerente',
+  };
+
   return (
     <div className={styles.container}>
       <h1>Gerenciar Usuários</h1>
@@ -22,7 +29,7 @@ const UserList = ({ users, onDelete }) => {
               <div className={styles.userInfo}>
                 <h2>{user.name}</h2>
                 <p>Email: {user.email}</p>
-                <p>Permissões: {user.role.join(', ')}</p>
+                <p>Permissão: {roleLabels[user.role] || user.role}</p>
               </div>
               <div className={styles.actions}>
                 <button

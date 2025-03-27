@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     if (response.success) {
       setAuthToken(response.token);
       localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
     }
     return response;
   };
